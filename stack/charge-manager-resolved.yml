@@ -19,8 +19,8 @@ services:
       # Email Configuration (from .env)
       MAIL_HOST: ${MAIL_HOST:-smtp.example.com}
       MAIL_PORT: ${MAIL_PORT:-587}
-      MAIL_USERNAME: ${MAIL_USERNAME}
-      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_USERNAME: luiz-nascimento.ln@academico.ifpb.edu.br
+      MAIL_PASSWORD: etbr ehxz urfd qecj
       MAIL_ENABLED: ${MAIL_ENABLED:-true}
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
