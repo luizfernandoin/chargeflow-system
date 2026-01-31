@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+        .header { background: #28a745; color: white; padding: 20px; border-radius: 5px; }
+        .content { background: white; padding: 20px; margin-top: 20px; border-radius: 5px; }
+        .info-box { background: #f0f0f0; padding: 15px; border-left: 4px solid #28a745; margin: 15px 0; }
+        .payment-details { background: #e8f5e9; padding: 15px; border-left: 4px solid #4caf50; margin: 15px 0; }
+        .barcode-box { background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; font-family: monospace; }
+        .qr-code { text-align: center; margin: 15px 0; }
+        .qr-code img { max-width: 200px; }
+        .copy-paste { word-break: break-all; background: #f5f5f5; padding: 10px; border-radius: 3px; font-family: monospace; font-size: 12px; }
+        .action-button { background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 3px; display: inline-block; margin: 10px 0; }
+        .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+        .section-title { font-size: 16px; font-weight: bold; color: #28a745; margin-top: 20px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Cobrança Criada com Sucesso</h1>
+        </div>
+        <div class="content">
+            <p th:text="'Olá ' + ${charge.client.name} + ','"></p>
+            <p>Uma nova cobrança foi criada em seu sistema.</p>
+            
+            <!-- Informações Básicas -->
+            <div class="info-box">
+                <p><strong>ID da Cobrança:</strong> <span th:text="${charge.id}"></span></p>
+                <p><strong>Valor:</strong> <span th:text="'R$ ' + ${#numbers.formatDecimal(charge.value, 1, 2)}"></span></p>
+                <p><strong>Tipo de Pagamento:</strong> <span th:text="${chargeType}"></span></p>
+                <p><strong>Vencimento:</strong> <span th:text="${dueDate}"></span></p>
+                <p><strong>Status:</strong> Registrada</p>
+            </div>
+            
+            <!-- Seção PIX -->
+            <div th:if="${chargeType == 'PIX'}">
+                <div class="payment-details">
+                    <div class="section-title">Instruções para Pagamento via PIX</div>
+                    
+                    <!-- QR Code -->
+                    <div th:if="${qrCodeImage}">
+                        <p><strong>Código QR para scannear:</strong></p>
+                        <div class="qr-code">
+                            <img th:src="'data:image/png;base64,' + ${qrCodeImage}" alt="QR Code PIX"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Chave PIX (copy-paste) -->
+                    <p><strong>Ou copie e cole o código PIX:</strong></p>
+                    <div class="copy-paste" th:text="${copyPaste}"></div>
+                    
+                    <!-- Data de Expiração -->
+                    <p><strong>Válido até:</strong> <span th:text="${expirationDate}"></span></p>
+                </div>
+            </div>
+            
+            <!-- Seção BOLETO -->
+            <div th:if="${chargeType == 'BOLETO'}">
+                <div class="payment-details">
+                    <div class="section-title">Instruções para Pagamento via Boleto Bancário</div>
+                    
+                    <!-- Link para download do boleto -->
+                    <p><strong>Baixe e imprima seu boleto:</strong></p>
+                    <a th:href="${bankSlipUrl}" class="action-button" target="_blank">Acessar Boleto</a>
+                    
+                    <!-- Código de Barras -->
+                    <p><strong>Código de Barras:</strong></p>
+                    <div class="barcode-box" th:text="${barCode}"></div>
+                    
+                    <!-- Dígito Verificador -->
+                    <p><strong>Linha Digitável:</strong></p>
+                    <div class="copy-paste" th:text="${digitableLine}"></div>
+                    
+                    <!-- Nosso Número -->
+                    <p><strong>Nosso Número:</strong> <span th:text="${nossoNumero}"></span></p>
+                    
+                    <!-- Data de Vencimento -->
+                    <p><strong>Data de Vencimento:</strong> <span th:text="${dueDate}"></span></p>
+                </div>
+            </div>
+            
+            <!-- Seção CARTÃO DE CRÉDITO -->
+            <div th:if="${chargeType == 'CARTAO_CREDITO'}">
+                <div class="payment-details">
+                    <div class="section-title">Instruções para Pagamento via Cartão de Crédito</div>
+                    
+                    <!-- Link para pagamento -->
+                    <p><strong>Clique no link abaixo para realizar o pagamento:</strong></p>
+                    <a th:href="${invoiceUrl}" class="action-button" target="_blank">Pagar Agora</a>
+                    
+                    <!-- Informações do pagamento -->
+                    <p th:if="${paymentText}" th:text="${paymentText}"></p>
+                    <p th:if="${cardInfo}" th:text="${cardInfo}"></p>
+                    
+                    <!-- Data de Vencimento -->
+                    <p><strong>Data de Vencimento:</strong> <span th:text="${dueDate}"></span></p>
+                </div>
+            </div>
+            
+            <p style="margin-top: 20px; color: #666;">Acompanhe o status da cobrança em sua plataforma.</p>
+        </div>
+        <div class="footer">
+            <p>© 2026 Gerenciador de Cobranças. Todos os direitos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>

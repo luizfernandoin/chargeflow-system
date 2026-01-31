@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+        .header { background: #20c997; color: white; padding: 20px; border-radius: 5px; }
+        .content { background: white; padding: 20px; margin-top: 20px; border-radius: 5px; }
+        .success-box { background: #d4edda; padding: 15px; border-left: 4px solid #20c997; margin: 15px 0; }
+        .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Pagamento Recebido! ✓</h1>
+        </div>
+        <div class="content">
+            <p th:text="'Olá ' + ${charge.client.name} + ','"></p>
+            <p>Temos o prazer de informar que seu pagamento foi recebido com sucesso!</p>
+            <div class="success-box">
+                <p th:text="'ID da Cobrança: ' + ${charge.id}"></p>
+                <p th:text="'Valor Pago: R$ ' + ${#numbers.formatDecimal(charge.value, 1, 2)}"></p>
+                <p th:text="'Tipo de Pagamento: ' + ${charge.type}"></p>
+                <p th:text="'Data: ' + ${#dates.format(now, 'dd/MM/yyyy HH:mm')}"></p>
+            </div>
+            <p>Obrigado por seu pagamento!</p>
+        </div>
+        <div class="footer">
+            <p>© 2026 Gerenciador de Cobranças. Todos os direitos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
