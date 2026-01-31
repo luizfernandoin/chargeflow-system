@@ -17,7 +17,9 @@ public class ChargeProxyClient {
 
     @PostConstruct
     public void init() {
-        ChargeProxyPortService service = new ChargeProxyPortService();
+        ChargeProxyPortService service = new ChargeProxyPortService(
+                ChargeProxyPortService.class.getResource("/wsdl/charge-proxy.wsdl")
+        );
         
         this.port = service.getChargeProxyPortSoap11();
         
@@ -32,6 +34,8 @@ public class ChargeProxyClient {
             Long chargeId,
             Double value,
             String type,
+            String dueDate,
+            String creditCardToken,
             String clientName,
             String clientEmail,
             String clientCpfCnpj
@@ -41,6 +45,8 @@ public class ChargeProxyClient {
         request.setChargeId(chargeId);
         request.setValue(value);
         request.setType(type);
+        request.setDueDate(dueDate);
+        request.setCreditCardToken(creditCardToken);
         request.setClientName(clientName);
         request.setClientEmail(clientEmail);
         request.setClientCpfCnpj(clientCpfCnpj);

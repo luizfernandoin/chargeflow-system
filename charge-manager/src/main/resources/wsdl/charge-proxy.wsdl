@@ -8,6 +8,8 @@
                 <xs:element name="chargeId" type="xs:long"/>
                 <xs:element name="value" type="xs:double"/>
                 <xs:element name="type" type="xs:string"/>
+                <xs:element name="dueDate" type="xs:string"/>
+                <xs:element name="creditCardToken" type="xs:string" minOccurs="0"/>
 
                 <!-- 🔥 DADOS REAIS DO CLIENTE -->
                 <xs:element name="clientName" type="xs:string"/>
@@ -22,6 +24,15 @@
             <xs:sequence>
                 <xs:element name="asaasId" type="xs:string"/>
                 <xs:element name="status" type="xs:string"/>
+                <xs:element name="invoiceUrl" type="xs:string" minOccurs="0"/>
+                <xs:element name="bankSlipUrl" type="xs:string" minOccurs="0"/>
+                <xs:element name="pixEncodedImage" type="xs:string" minOccurs="0"/>
+                <xs:element name="pixPayload" type="xs:string" minOccurs="0"/>
+                <xs:element name="pixExpirationDate" type="xs:string" minOccurs="0"/>
+                <xs:element name="boletoIdentificationField" type="xs:string" minOccurs="0"/>
+                <xs:element name="boletoBarCode" type="xs:string" minOccurs="0"/>
+                <xs:element name="boletoNossoNumero" type="xs:string" minOccurs="0"/>
+                <xs:element name="creditCardToken" type="xs:string" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -97,7 +108,7 @@
   </wsdl:binding>
   <wsdl:service name="ChargeProxyPortService">
     <wsdl:port binding="tns:ChargeProxyPortSoap11" name="ChargeProxyPortSoap11">
-      <soap:address location="http://localhost:8080/ws"/>
+      <soap:address location="http://192.168.56.10:8080/ws"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

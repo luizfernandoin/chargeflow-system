@@ -2,6 +2,7 @@ package com.dac.charge_manager.business.asaas;
 
 import com.dac.charge_manager.business.charge.Charge;
 import com.dac.charge_manager.business.charge.ChargeService;
+import com.dac.charge_manager.business.email.EmailService;
 import com.dac.charge_manager.infra.repository.AsaasEventRepository;
 import com.dac.charge_manager.infra.repository.ChargeRepository;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,16 +19,19 @@ public class AsaasEventService {
     private final AsaasEventRepository repository;
     private final ChargeRepository chargeRepository;
     private final ChargeService chargeService;
+    private final EmailService emailService;
     private final ObjectMapper mapper = new ObjectMapper();
 
     public AsaasEventService(
             AsaasEventRepository repository,
             ChargeRepository chargeRepository,
-            ChargeService chargeService
+            ChargeService chargeService,
+            EmailService emailService
     ) {
         this.repository = repository;
         this.chargeRepository = chargeRepository;
         this.chargeService = chargeService;
+        this.emailService = emailService;
     }
 
     public void save(String event, String payload) {
