@@ -1,5 +1,6 @@
 package com.dac.charge_manager.business.charge;
 
+import com.dac.charge_manager.business.charge.detail.ChargeDetails;
 import com.dac.charge_manager.business.client.Client;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -26,6 +27,9 @@ public class Charge {
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
+
+    @Transient
+    private ChargeDetails details;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -76,6 +80,14 @@ public class Charge {
 
     public void setClient(Client client) {
         this.client = client;
+    }
+
+    public ChargeDetails getDetails() {
+        return details;
+    }
+
+    public void setDetails(ChargeDetails details) {
+        this.details = details;
     }
 
     public LocalDateTime getCreatedAt() {
