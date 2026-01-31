@@ -76,29 +76,32 @@
 			</plugin>
 
 			<plugin>
-                <groupId>com.sun.xml.ws</groupId>
-                <artifactId>jaxws-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>generate-from-wsdl</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>wsimport</goal>
-                        </goals>
-                        <configuration>
-                            <wsdlFiles>
-                                <wsdlFile>${project.basedir}/src/main/resources/wsdl/charge-manager.wsdl</wsdlFile>
-                            </wsdlFiles>
-                            <packageName>com.dac.chargemanager.wsdl</packageName>
-                            <sourceDestDir>${project.build.directory}/generated-sources/jaxws</sourceDestDir>
-                            <keep>true</keep>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+				<groupId>com.sun.xml.ws</groupId>
+				<artifactId>jaxws-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>generate-from-wsdl</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>wsimport</goal>
+						</goals>
+						<configuration>
+							<wsdlFiles>
+								<wsdlFile>${project.basedir}/src/main/resources/wsdl/charge-manager.wsdl</wsdlFile>
+							</wsdlFiles>
 
-            <plugin>
+							<wsdlLocation>wsdl/charge-manager.wsdl</wsdlLocation>
+
+							<packageName>com.dac.chargemanager.wsdl</packageName>
+							<sourceDestDir>${project.build.directory}/generated-sources/jaxws</sourceDestDir>
+							<keep>true</keep>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
                 <version>3.2.0</version>

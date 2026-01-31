@@ -55,6 +55,16 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
         <dependency>
             <groupId>jakarta.xml.ws</groupId>
             <artifactId>jakarta.xml.ws-api</artifactId>
@@ -111,6 +121,9 @@
                             <wsdlFiles>
                                 <wsdlFile>${project.basedir}/src/main/resources/wsdl/charge-proxy.wsdl</wsdlFile>
                             </wsdlFiles>
+
+                            <wsdlLocation>wsdl/charge-proxy.wsdl</wsdlLocation>
+
                             <packageName>com.dac.chargeproxy.wsdl</packageName>
                             <sourceDestDir>${project.build.directory}/generated-sources/jaxws</sourceDestDir>
                             <keep>true</keep>
