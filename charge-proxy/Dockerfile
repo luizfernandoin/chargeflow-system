@@ -9,4 +9,4 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/charge-proxy-0.0.1-SNAPSHOT.jar ./charge-proxy.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "charge-proxy.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "charge-proxy.jar"]
