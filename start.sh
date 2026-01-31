@@ -10,6 +10,19 @@ REGISTRY="$MANAGER_IP:5000"
 PROXY_URL="http://$MANAGER_IP:8080"
 WSDL_URL="$PROXY_URL/ws/chargeservice.wsdl"
 
+# Carregar variáveis do .env
+if [ -f .env ]; then
+    echo "📋 Carregando variáveis do .env..."
+    # Fazer parsing correto do .env (ignorando comentários e linhas vazias)
+    while IFS='=' read -r key value; do
+        [[ "$key" =~ ^#.*$ ]] && continue
+        [[ -z "$key" ]] && continue
+        export "$key=$value"
+    done < .env
+else
+    echo "⚠️  Arquivo .env não encontrado. Usando valores padrão."
+fi
+
 
 # ============================================
 # 1. CONFIGURAR DOCKER NO HOST
@@ -84,18 +97,25 @@ docker push "$REGISTRY/charge-manager:latest"
 
 echo ""
 echo "📦 3. Deploy do manager..."
+
+# Copiar .env para a VM (via pasta stack sincronizada)
+if [ -f .env ]; then
+    echo "📋 Copiando .env para a VM..."
+    cp .env ../stack/.env
+fi
+
 vagrant ssh manager -- "
   cd /vagrant/stacks
+  echo '🔧 Substituindo variáveis no YAML...'
+  # Carregar variáveis do .env de forma segura
+  while IFS='=' read -r key value; do
+    [[ \"\$key\" =~ ^#.*\$ ]] && continue
+    [[ -z \"\$key\" ]] && continue
+    export \"\$key=\$value\"
+  done < .env
+  envsubst < charge-manager.yml > charge-manager-resolved.yml
   echo '📦 Manager...'
-  docker stack deploy -c charge-manager.yml chargeflow
-  
-  echo ''
-  echo '✅ Stack completa!'
-  echo ''
-  echo '📊 Status dos serviços:'
-  docker stack services chargeflow
-  echo ''
-  echo '🐳 Containers:'
+  docker stack deploy -c charge-manager-resolved.yml chargeflow
   docker stack ps chargeflow
 "
 
