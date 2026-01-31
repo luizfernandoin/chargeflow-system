@@ -25,6 +25,7 @@ public class ChargeProxyEndpoint {
     @PayloadRoot(namespace = NAMESPACE, localPart = "CreateChargeRequest")
     @ResponsePayload
     public CreateChargeResponse createCharge(@RequestPayload CreateChargeRequest request) {
+        System.out.println("Chegou no proxy para criar o charge");
         String clientName = request.getClientName();
         String clientEmail = request.getClientEmail();
         String clientCpfCnpj = request.getClientCpfCnpj();
@@ -37,7 +38,9 @@ public class ChargeProxyEndpoint {
         Map<String, Object> payment = asaasClient.createPayment(
                 customerId,
                 value,
-                type
+                type,
+                java.time.LocalDate.parse(request.getDueDate()),
+                request.getCreditCardToken()
         );
 
         String asaasId = payment.get("id").toString();
@@ -45,6 +48,44 @@ public class ChargeProxyEndpoint {
         CreateChargeResponse response = objectFactory.createCreateChargeResponse();
         response.setAsaasId(asaasId);
         response.setStatus("REGISTERED");
+
+        if (payment.get("invoiceUrl") != null) {
+            response.setInvoiceUrl(payment.get("invoiceUrl").toString());
+        }
+        if (payment.get("bankSlipUrl") != null) {
+            response.setBankSlipUrl(payment.get("bankSlipUrl").toString());
+        }
+        if (payment.get("creditCardToken") != null) {
+            response.setCreditCardToken(payment.get("creditCardToken").toString());
+        }
+
+        if ("PIX".equalsIgnoreCase(type)) {
+            Map<String, Object> pixQrCode = asaasClient.getPixQrCode(asaasId);
+            if (pixQrCode != null) {
+                if (pixQrCode.get("encodedImage") != null) {
+                    response.setPixEncodedImage(pixQrCode.get("encodedImage").toString());
+                }
+                if (pixQrCode.get("payload") != null) {
+                    response.setPixPayload(pixQrCode.get("payload").toString());
+                }
+                if (pixQrCode.get("expirationDate") != null) {
+                    response.setPixExpirationDate(pixQrCode.get("expirationDate").toString());
+                }
+            }
+        } else if ("BOLETO".equalsIgnoreCase(type)) {
+            Map<String, Object> identification = asaasClient.getBoletoIdentificationField(asaasId);
+            if (identification != null) {
+                if (identification.get("identificationField") != null) {
+                    response.setBoletoIdentificationField(identification.get("identificationField").toString());
+                }
+                if (identification.get("barCode") != null) {
+                    response.setBoletoBarCode(identification.get("barCode").toString());
+                }
+                if (identification.get("nossoNumero") != null) {
+                    response.setBoletoNossoNumero(identification.get("nossoNumero").toString());
+                }
+            }
+        }
 
         return response;
     }

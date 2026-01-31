@@ -5,6 +5,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @Component
@@ -32,6 +34,7 @@ public class AsaasRestClient {
     }
 
     public Map createCustomer(String name, String email, String cpfCnpj) {
+        System.out.println("chegou no asaas cliente: " + apiKey);
         System.out.println(apiKey);
 
         HttpEntity<Map<String, Object>> request =
@@ -39,7 +42,8 @@ public class AsaasRestClient {
                         Map.of(
                                 "name", name,
                                 "email", email,
-                                "cpfCnpj", cpfCnpj
+                                "cpfCnpj", cpfCnpj,
+                                "notificationDisabled", true
                         ),
                         headers()
                 );
@@ -51,30 +55,62 @@ public class AsaasRestClient {
         );
     }
 
-    public Map createPayment(String customerId, Double value, String type) {
-
+    public Map createPayment(
+            String customerId,
+            Double value,
+            String type,
+            LocalDate dueDate,
+            String creditCardToken
+    ) {
         String billingType = switch (type) {
             case "PIX" -> "PIX";
             case "CARTAO_CREDITO" -> "CREDIT_CARD";
             default -> "BOLETO";
         };
 
-        HttpEntity<Map<String, Object>> request =
-                new HttpEntity<>(
-                        Map.of(
-                                "customer", customerId,
-                                "billingType", billingType,
-                                "value", value,
-                                "dueDate", "2026-01-10"
-                        ),
-                        headers()
-                );
+        Map<String, Object> body = new java.util.HashMap<>();
+        body.put("customer", customerId);
+        body.put("billingType", billingType);
+        body.put("value", value);
+        body.put("dueDate", dueDate.format(DateTimeFormatter.ISO_DATE));
+
+        if (creditCardToken != null && !creditCardToken.trim().isEmpty()) {
+            body.put("creditCardToken", creditCardToken);
+        }
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers());
 
         return restTemplate.postForObject(
                 baseUrl + "/payments",
                 request,
                 Map.class
         );
+    }
+
+    public Map getPixQrCode(String paymentId) {
+        HttpEntity<Void> request = new HttpEntity<>(headers());
+
+        ResponseEntity<Map> response = restTemplate.exchange(
+                baseUrl + "/payments/" + paymentId + "/pixQrCode",
+                HttpMethod.GET,
+                request,
+                Map.class
+        );
+
+        return response.getBody();
+    }
+
+    public Map getBoletoIdentificationField(String paymentId) {
+        HttpEntity<Void> request = new HttpEntity<>(headers());
+
+        ResponseEntity<Map> response = restTemplate.exchange(
+                baseUrl + "/payments/" + paymentId + "/identificationField",
+                HttpMethod.GET,
+                request,
+                Map.class
+        );
+
+        return response.getBody();
     }
 
     public void cancelPayment(String paymentId) {
