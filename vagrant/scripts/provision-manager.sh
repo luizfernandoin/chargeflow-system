@@ -48,9 +48,16 @@ if ! docker service ls 2>/dev/null | grep -q "registry"; then
         --constraint node.role==manager \
         registry:2
     echo "✅ Registry criado na porta 5000"
+    sleep 5
 else
     echo "✅ Registry já existe"
 fi
+
+echo "📦 Pre-carregando imagens do registry..."
+docker pull postgres:15-alpine
+docker tag postgres:15-alpine localhost:5000/postgres:15-alpine
+docker push localhost:5000/postgres:15-alpine
+echo "✅ PostgreSQL imagem pré-carregada no registry"
 
 echo "🔑 Gerando tokens..."
 docker swarm join-token -q manager > /shared/tokens/manager
