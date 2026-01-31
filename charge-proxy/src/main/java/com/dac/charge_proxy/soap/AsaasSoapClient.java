@@ -17,7 +17,9 @@ public class AsaasSoapClient {
 
     @PostConstruct
     public void init() {
-        AsaasPortService service = new AsaasPortService();
+        AsaasPortService service = new AsaasPortService(
+                AsaasPortService.class.getResource("/wsdl/charge-manager.wsdl")
+        );
         
         this.port = service.getAsaasPortSoap11();
         
